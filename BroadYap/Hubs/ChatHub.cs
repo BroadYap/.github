@@ -27,14 +27,14 @@ namespace BroadYap.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, chatRoom);
             _sharedDb.Connection[Context.ConnectionId] = new UserConnection { UserName = userName, ChatRoom = chatRoom };
 
-            await Clients.Group(chatRoom).SendAsync("ReceiveMessage", "admin", $"{userName} has joined the chat room {chatRoom}");
+            await Clients.Group(chatRoom).SendAsync("ReceiveMessage", new { User = "admin", Text = $"{userName} has joined the chat room {chatRoom}" , Timestamp = System.DateTime.UtcNow });
         }
 
         public async Task SendMessage(string message)
         {
             if (string.IsNullOrEmpty(message))
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", "admin", "Message cannot be empty.");
+                await Clients.Caller.SendAsync("ReceiveMessage", new { User = "admin", Text = "Message cannot be empty.", Timestamp = System.DateTime.UtcNow });
                 return;
             }
 
